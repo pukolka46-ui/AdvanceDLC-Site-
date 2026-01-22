@@ -16,7 +16,7 @@ export default function FAQPage() {
         <div className="absolute inset-0 -z-20 opacity-40">
           <Image
             src="/fluid1.png"
-            alt="Background Shape"
+            alt="Фоновая фигура"
             fill
             className="object-cover"
             priority
@@ -26,7 +26,7 @@ export default function FAQPage() {
         <div className="absolute inset-0 -z-30 opacity-30">
           <Image
             src="/fluid2.png"
-            alt="Background Shape 2"
+            alt="Дополнительная фоновая фигура"
             fill
             className="object-cover"
           />
@@ -43,23 +43,28 @@ export default function FAQPage() {
           </motion.h1>
 
           <FAQCard
-            question="How do I launch the client?"
-            answer="First, download the launcher and open it. In the window that appears, you will see a field where you can set RAM allocation. We recommend assigning no more than 8 GB. After that, press the Start button and wait for the client to load."
+            question="Как запустить клиент?"
+            answer="Сначала скачайте лаунчер и откройте его. В появившемся окне вы увидите поле для настройки объёма выделенной оперативной памяти. Рекомендуется выделять не более 8 ГБ. После этого нажмите кнопку «Старт» и дождитесь полной загрузки клиента."
           />
 
           <FAQCard
-            question="How do I load a config into the client?"
-            answer="To load a config, first launch the client at least once. Then go to this directory: C:\\Async\\beta\\client\\configs and place your .async config file into that folder."
+            question="Как загрузить конфиг в клиент?"
+            answer="Чтобы загрузить конфиг, сначала запустите клиент хотя бы один раз. Затем перейдите в папку: C:\\Async\\beta\\client\\configs и поместите туда свой файл с расширением .async. После этого клиент сможет использовать ваш конфиг."
           />
 
           <FAQCard
-            question="How can I create my own script for the client?"
-            answer="To create a custom script, you need to read the documentation first. It contains usage examples, event hooks, and API references. Make sure to follow the development guidelines to ensure compatibility."
+            question="Как создать свой скрипт для клиента?"
+            answer="Для создания собственного скрипта сначала ознакомьтесь с документацией. В ней есть примеры использования, доступные хуки событий и описание API. Следуйте рекомендациям по разработке, чтобы обеспечить совместимость со всеми версиями клиента."
           />
 
           <FAQCard
-            question="How can I contact tech support?"
-            answer="There are two ways to reach support. First - open a ticket on our Discord server in the Support channel. Second - send a message to our VK group. Support typically responds within 24 hours."
+            question="Как связаться с технической поддержкой?"
+            answer="Есть два способа связаться с поддержкой. Первый — открыть тикет на нашем Discord-сервере в канале Support. Второй — написать в нашу группу ВКонтакте. Обычно поддержка отвечает в течение 24 часов."
+          />
+
+          <FAQCard
+            question="Советы и рекомендации"
+            answer="Регулярно обновляйте клиент до последней версии, чтобы использовать новые функции и улучшения. Также следите за нашими анонсами и документацией, чтобы быть в курсе последних изменений."
           />
         </section>
       </main>

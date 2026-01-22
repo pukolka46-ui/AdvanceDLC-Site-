@@ -166,7 +166,7 @@ export default function Home() {
                 <div className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
                   <iframe
                     className="rounded-2xl w-full h-[450px]"
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                    src="Soon"
                     title="Gameplay Video"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

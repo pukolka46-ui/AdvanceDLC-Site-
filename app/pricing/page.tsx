@@ -25,13 +25,13 @@ export default function PricingPage() {
           <div className="flex flex-wrap gap-14 justify-center">
             <PricingCard
               title="30 days"
-              price="249 rubles"
+              price="300Рублей"
               image="/pricing.jpg"
             />
 
             <PricingCard
               title="Forever"
-              price="599 rubles"
+              price="600рублей"
               image="/pricing.jpg"
             />
           </div>

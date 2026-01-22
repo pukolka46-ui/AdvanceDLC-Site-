@@ -13,12 +13,9 @@ export default function Header() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="
         fixed top-0 left-0 z-[25]
-
         h-20
-
         w-full
         px-10
-
         backdrop-blur-xl
         bg-black/60
         border-b border-white/10
@@ -30,7 +27,14 @@ export default function Header() {
             href="/"
             className="flex items-center gap-3 group transition hover:opacity-100"
           >
-            <Image src="/icon.png" alt="Icon" width={45} height={45} priority />
+            <Image
+              src="/advance-dlc-icon.png" // новый логотип
+              alt="AdvanceDLC"
+              width={45}
+              height={45}
+              priority
+            />
+            <span className="text-white font-bold text-xl">AdvanceDLC</span>
           </Link>
 
           <div className="flex items-center gap-12 text-white/85">
@@ -44,7 +48,7 @@ export default function Header() {
                 className="group-hover:text-white transition"
               />
               <span className="text-sm group-hover:text-white transition">
-                Home
+                Главная
               </span>
             </Link>
 
@@ -58,7 +62,7 @@ export default function Header() {
                 className="group-hover:text-white transition"
               />
               <span className="text-sm group-hover:text-white transition">
-                Pricing
+                Цены
               </span>
             </Link>
 
@@ -90,7 +94,7 @@ export default function Header() {
               backdrop-blur-xl
             "
           >
-            Login
+            Войти
           </p>
         </Link>
       </div>

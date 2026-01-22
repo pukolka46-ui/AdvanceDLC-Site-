@@ -8,8 +8,8 @@ const unbounded = Unbounded({
 });
 
 export const metadata: Metadata = {
-  title: "Async DLC",
-  description: "Async Client by finikov",
+  title: "Advance DLC",
+  description: "Advance DLC By Pukolka",
 };
 
 export default function RootLayout({
