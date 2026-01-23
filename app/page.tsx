@@ -1,185 +1,80 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-import Loader from "@/components/Loader";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Card from "@/components/Card";
-import GridBackground from "@/components/GridBackground";
-
-import {
-  Eye,
-  SlidersHorizontal,
-  Gauge,
-  ArrowsClockwise,
-} from "@phosphor-icons/react";
 
 export default function Home() {
-  const [ready, setReady] = useState(false);
-
-  const handleLoaderFinish = useCallback(() => {
-    setReady(true);
-  }, []);
-
   return (
     <>
-      <Loader onFinished={handleLoaderFinish} />
+      <Header />
 
-      {ready && (
-        <>
-          <Header />
+      <main className="relative bg-black text-white overflow-hidden">
 
-          <motion.main
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7 }}
-            className="text-white bg-black relative z-10"
-          >
-            <section className="min-h-screen px-48 flex items-center relative">
-              <GridBackground className="absolute inset-0" />
-              <div className="relative z-[2] w-full flex items-center gap-20">
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7 }}
-                  viewport={{ once: true }}
-                  className="w-1/2 pr-8"
-                >
-                  <h1 className="text-7xl font-extrabold leading-tight mb-6">
-                    About Us
-                  </h1>
+        {/* Hero-блок */}
+        <section className="flex min-h-screen items-center px-48 gap-20">
+          <div className="w-1/2 flex flex-col justify-center">
+            <h1 className="text-7xl font-extrabold mb-6">Привет</h1>
+            <p className="text-xl text-white/60 mb-6">
+              Добро пожаловать на сайт AdvanceDLC-современный проект который имеет в себе 3 проекта и каждый из них уникален по особому,дальше-больше,следите за нами!
+            </p>
+          </div>
+          <div className="w-1/2 flex justify-end">
+            <Image
+              src="/chat.jpg"
+              alt="Hero"
+              width={650}
+              height={650}
+              className="drop-shadow-[0_0_70px_rgba(150,80,255,0.45)] select-none"
+            />
+          </div>
+        </section>
 
-                  <p className="text-xl text-white/60 max-w-md mb-12">
-                    We create a next-generation game client focused on speed,
-                    stability and a premium user experience. More FPS. Modern
-                    modules. Zero distractions.
-                  </p>
+        {/* 4️⃣ Скриншоты / Галерея */}
+        <section className="px-48 py-20">
+          <h2 className="text-5xl font-bold mb-10 text-center">Скриншоты клиента</h2>
+          <div className="grid grid-cols-3 gap-8">
+            <Image src="/Screen1.png" width={400} height={300} alt="Chat"/>
+            <Image src="/Screen2.png" width={400} height={300} alt="Pricing"/>
+            <Image src="/Screen3.png" width={400} height={300} alt="Background"/>
+          </div>
+        </section>
 
-                  <div className="grid grid-cols-2 gap-6 mb-14">
-                    <div>
-                      <p className="text-4xl font-bold">10K+</p>
-                      <p className="text-white/50">Active users</p>
-                    </div>
-                    <div>
-                      <p className="text-4xl font-bold">60K+</p>
-                      <p className="text-white/50">Total downloads</p>
-                    </div>
-                    <div>
-                      <p className="text-4xl font-bold">30%+</p>
-                      <p className="text-white/50">More FPS</p>
-                    </div>
-                    <div>
-                      <p className="text-4xl font-bold">24/7</p>
-                      <p className="text-white/50">Support</p>
-                    </div>
-                  </div>
-                </motion.div>
+        {/* 7️⃣ Новости / Updates */}
+        <section className="px-48 py-20 bg-white/5 rounded-2xl my-10">
+          <h2 className="text-5xl font-bold mb-10 text-center">Новости и обновления</h2>
+          <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+            <div className="p-6 bg-white/10 rounded-xl">
+              <h3 className="text-2xl font-bold mb-2">Версия 1.0.2</h3>
+              <p className="text-white/70">Хз</p>
+            </div>
+            <div className="p-6 bg-white/10 rounded-xl">
+              <h3 className="text-2xl font-bold mb-2">Версия 1.0.1</h3>
+              <p className="text-white/70">+Оптимизация,+Выход на новуюверсию.</p>
+            </div>
+          </div>
+        </section>
 
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8 }}
-                  viewport={{ once: true }}
-                  className="w-1/2 flex justify-end"
-                >
-                  <Image
-                    src="/icon.png"
-                    alt="Hero"
-                    width={650}
-                    height={650}
-                    className="drop-shadow-[0_0_70px_rgba(150,80,255,0.45)] select-none"
-                  />
-                </motion.div>
-              </div>
-            </section>
+        {/* 6️⃣ Отзывы пользователей */}
+        <section className="px-48 py-20">
+          <h2 className="text-5xl font-bold mb-10 text-center">Отзывы</h2>
+          <div className="grid grid-cols-2 gap-10">
+            <div className="p-6 bg-white/10 rounded-xl">
+              <p className="text-white/80 mb-4">“Впервые вижу проект который разрабатывает сразу несколько проекто,и старается удивитьпользователей,мне все нравится”</p>
+              <span className="text-purple-400 font-bold">— SimplyIdk</span>
+            </div>
+            <div className="p-6 bg-white/10 rounded-xl">
+              <p className="text-white/80 mb-4">“Лучшийпроект который я видел,отзывы говорят о себе)) покупайте и станьте крутым.”</p>
+              <span className="text-purple-400 font-bold">— Pukolka</span>
+            </div>
+          </div>
+        </section>
 
-            <section className="min-h-screen flex items-center px-48 relative">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, x: -40 }}
-                whileInView={{ opacity: 1, scale: 1, x: 0 }}
-                transition={{ duration: 0.7 }}
-                viewport={{ once: true }}
-                className="w-1/2 flex justify-start relative"
-              >
-                <div className="-ml-24 rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/20">
-                  <Image
-                    src="/chat.jpg"
-                    width={840}
-                    height={840}
-                    alt="Chat Screenshot"
-                    className="rounded-2xl"
-                  />
-                </div>
-              </motion.div>
+      </main>
 
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7 }}
-                viewport={{ once: true }}
-                className="w-1/2 pl-20"
-              >
-                <h1 className="text-6xl font-extrabold mb-10">
-                  Our Advantages
-                </h1>
-
-                <div className="grid grid-cols-2 gap-8">
-                  <Card
-                    icon={<Eye size={26} />}
-                    title="Beautiful Visuals"
-                    description="Clean effects, polished UI, and modern styling."
-                  />
-                  <Card
-                    icon={<SlidersHorizontal size={26} />}
-                    title="Fully Customizable"
-                    description="Tune modules, visuals, UI and effects exactly the way you want."
-                  />
-                  <Card
-                    icon={<Gauge size={26} />}
-                    title="High Performance"
-                    description="Smooth gameplay, optimized FPS, stable performance."
-                  />
-                  <Card
-                    icon={<ArrowsClockwise size={26} />}
-                    title="Frequent Updates"
-                    description="New features, improvements and bug fixes all the time."
-                  />
-                </div>
-              </motion.div>
-            </section>
-
-            <section className="min-h-screen flex items-center justify-center px-48 relative">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7 }}
-                viewport={{ once: true }}
-                className="w-full flex flex-col items-center justify-center"
-              >
-                <h1 className="text-6xl font-extrabold mb-12 text-center">
-                  Gameplay Showcase
-                </h1>
-
-                <div className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
-                  <iframe
-                    className="rounded-2xl w-full h-[450px]"
-                    src="Soon"
-                    title="Gameplay Video"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              </motion.div>
-            </section>
-
-            <Footer />
-          </motion.main>
-        </>
-      )}
+      <Footer />
     </>
   );
 }

@@ -9,7 +9,7 @@ const unbounded = Unbounded({
 
 export const metadata: Metadata = {
   title: "Advance DLC",
-  description: "Advance DLC By Pukolka",
+  description: "DLC сайт команды Advance.",
 };
 
 export default function RootLayout({
