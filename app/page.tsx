@@ -27,9 +27,9 @@ type UpdateKeys = "AdvanceDLC" | "Visuals" | "Loader";
 export default function HomePage() {
   const router = useRouter();
   const [activeUpdate, setActiveUpdate] = useState<UpdateKeys | null>(null);
-  const [windowSize, setWindowSize] = useState<{ width: number; height: number } | null>(null);
+  const [windowSize, setWindowSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
 
-  // Только на клиенте устанавливаем размеры окна
+  // Только на клиенте
   useEffect(() => {
     if (typeof window !== "undefined") {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -65,10 +65,10 @@ export default function HomePage() {
   const handlePayment = (method: string) => alert(`Оплата через ${method} — заглушка`);
 
   return (
-    <main className="relative overflow-hidden min-h-screen text-white" style={{ background: "linear-gradient(135deg, #1a0a2a, #4b1d67)" }}>
+    <main className="relative overflow-hidden min-h-screen text-white bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700">
       
       {/* ================= PARTICLES ================= */}
-      {windowSize &&
+      {windowSize.width > 0 &&
         Array.from({ length: 50 }).map((_, i) => (
           <Particle
             key={i}
