@@ -1,29 +1,14 @@
-import type { Metadata } from "next";
-import { Unbounded } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
-const unbounded = Unbounded({
-  variable: "--font-unbounded",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "Advance DLC",
-  description: "DLC сайт команды Advance.",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        suppressHydrationWarning
-        className={`${unbounded.variable} antialiased`}
-      >
+    <html lang="ru">
+      <body className="bg-black text-white">
+        <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

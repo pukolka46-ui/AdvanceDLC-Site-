@@ -4,181 +4,205 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+const Particle = ({ size, x, y, delay }: { size: number; x: number; y: number; delay: number }) => (
+  <motion.div
+    className="absolute bg-white/20 rounded-full"
+    style={{ width: size, height: size, top: y, left: x }}
+    initial={{ opacity: 0, y }}
+    animate={{ opacity: [0, 0.5, 0], y: y + 100 }}
+    transition={{ repeat: Infinity, duration: 5 + delay, ease: "linear" }}
+  />
+);
 
 export default function PricingPage() {
+  const [productModalOpen, setProductModalOpen] = useState(false);
   const [tariffModalOpen, setTariffModalOpen] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [selectedTariff, setSelectedTariff] = useState<string | null>(null);
+
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+  const [selectedTariff, setSelectedTariff] = useState<{ name: string; price: string } | null>(null);
 
   const products = [
-    { title: "AdvanceDLC", price: "", image: "/pricing.jpg", hasOptions: true },
-    { title: "AdvanceVisuals", price: "250 руб.", image: "/pricing.jpg" },
-    { title: "AdvanceLoader", price: "Цены пока нет", image: "/pricing.jpg" },
+    { title: "AdvanceDLC", price: "150 ₽", image: "/pricing.jpg" },
+    { title: "AdvanceVisuals", price: "—", image: "/pricing.jpg" },
+    { title: "AdvanceLoader", price: "—", image: "/pricing.jpg" },
   ];
 
   const tariffs = [
-    { name: "15 дней", price: "150 руб." },
-    { name: "30 дней", price: "300 руб." },
-    { name: "45 дней", price: "450 руб." },
-    { name: "Навсегда", price: "600 руб." },
+    { name: "15 дней", price: "150 ₽" },
+    { name: "30 дней", price: "300 ₽" },
+    { name: "45 дней", price: "450 ₽" },
+    { name: "Навсегда", price: "600 ₽" },
   ];
 
-  const paymentMethods = ["СБП", "Банковская карта", "USDT"];
+  const paymentMethods = [
+    { name: "СБП", img: "/icons/sbp.png" },
+    { name: "Банковская карта", img: "/icons/card.png" },
+    { name: "USDT", img: "/icons/usdt.png" },
+  ];
+
+  const handlePayment = (method: string) => {
+    if (!selectedTariff || !selectedProduct) return;
+    alert(`Оплата ${selectedTariff.price} за ${selectedProduct} через ${method} — заглушка`);
+  };
 
   return (
-    <>
-      <Header />
+    <main className="relative bg-black text-white min-h-screen overflow-hidden px-6 py-20">
+      {/* ================= PARTICLES ================= */}
+      {Array.from({ length: 30 }).map((_, i) => (
+        <Particle key={i} size={2 + Math.random() * 4} x={Math.random() * window.innerWidth} y={Math.random() * window.innerHeight} delay={Math.random() * 3} />
+      ))}
 
-      <main className="text-white bg-black min-h-screen relative overflow-hidden">
-        <section className="relative z-10 pt-48 pb-40 flex flex-col items-center px-6">
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-6xl font-extrabold mb-20 text-center"
+      {/* ================= HERO ================= */}
+      <section className="max-w-5xl mx-auto text-center mb-20">
+        <h1 className="text-6xl font-extrabold mb-6">AdvanceDLC</h1>
+        <p className="text-white/70 text-xl mb-10">
+          Приватное решение для продвинутых пользователей. Быстро, безопасно, надёжно.
+        </p>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setProductModalOpen(true)}
+          className="px-10 py-4 font-bold rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400 hover:brightness-110 transition"
+        >
+          Выбрать тариф
+        </motion.button>
+      </section>
+
+      {/* ================= PRICING CARDS ================= */}
+      <section className="max-w-5xl mx-auto mb-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+        {products.map((p) => (
+          <motion.div
+            key={p.title}
+            whileHover={{ scale: 1.05 }}
+            className="relative bg-gradient-to-br from-white/5 to-white/10 rounded-3xl p-6 flex flex-col items-center shadow-lg cursor-pointer overflow-hidden"
           >
-            Цены
-          </motion.h1>
+            {p.title === "AdvanceDLC" && (
+              <div className="absolute top-0 right-0 bg-yellow-400 text-black text-xs px-3 py-1 rounded-bl-xl font-bold">
+                Чаще покупают
+              </div>
+            )}
+            <Image src={p.image} alt={p.title} width={200} height={120} className="rounded-xl mb-4 object-cover" />
+            <h3 className="text-2xl font-bold mb-2">{p.title}</h3>
+            <p className="text-white/70 mb-4">{p.price}</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 justify-center">
-            {products.map((product, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.2 }}
-                className="relative bg-white/10 rounded-3xl overflow-hidden border border-white/10 w-64 text-center mx-auto flex flex-col"
+            {p.title === "AdvanceDLC" ? (
+              <button
+                onClick={() => {
+                  setSelectedProduct(p.title);
+                  setProductModalOpen(false);
+                  setTariffModalOpen(true); // теперь сразу открывается выбор тарифа
+                }}
+                className="mt-auto px-6 py-2 bg-purple-500 hover:bg-purple-600 rounded-xl font-semibold transition"
               >
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  width={256}
-                  height={160}
-                  className="object-cover"
-                />
+                Купить
+              </button>
+            ) : (
+              <button className="mt-auto px-6 py-2 bg-gray-500/50 cursor-not-allowed rounded-xl font-semibold">Скоро</button>
+            )}
+          </motion.div>
+        ))}
+      </section>
 
-                <div className="p-6 flex flex-col gap-4">
-                  <h3 className="text-2xl font-bold">{product.title}</h3>
-                  {product.price && <p className="text-white/70 text-lg">{product.price}</p>}
-
-                  {product.hasOptions && (
+      {/* ================= PRODUCT MODAL ================= */}
+      <AnimatePresence>
+        {productModalOpen && (
+          <motion.div
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div className="bg-black/90 rounded-3xl p-10 w-96 flex flex-col gap-6">
+              <h2 className="text-3xl font-bold text-center mb-4">Выберите продукт</h2>
+              {products.map((p) => (
+                <motion.div key={p.title} whileHover={{ scale: 1.03 }} className="bg-white/10 rounded-xl p-4 flex flex-col items-center mb-4">
+                  <Image src={p.image} alt={p.title} width={120} height={80} className="rounded-xl mb-2" />
+                  <h3 className="font-bold mb-1">{p.title}</h3>
+                  <p className="text-white/70 mb-2">{p.price}</p>
+                  {p.title === "AdvanceDLC" ? (
                     <button
-                      onClick={() => setTariffModalOpen(true)}
-                      className="mt-6 relative px-4 py-2 rounded-xl text-white font-semibold overflow-hidden"
+                      onClick={() => {
+                        setSelectedProduct(p.title);
+                        setProductModalOpen(false);
+                        setTariffModalOpen(true);
+                      }}
+                      className="px-6 py-2 bg-purple-500 hover:bg-purple-600 rounded-xl font-semibold"
                     >
-                      {/* Мигающая градиентная подсветка */}
-                      <span className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-500 to-yellow-400 animate-pulse rounded-xl blur-sm"></span>
-                      <span className="relative z-10">Выбрать тариф</span>
+                      Купить
                     </button>
+                  ) : (
+                    <button className="px-6 py-2 bg-gray-500/50 cursor-not-allowed rounded-xl font-semibold">Скоро</button>
                   )}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Модальное окно тарифов AdvanceDLC */}
-        <AnimatePresence>
-          {tariffModalOpen && (
-            <motion.div
-              className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className="bg-black/90 rounded-3xl p-10 w-96 flex flex-col gap-6 relative"
-                initial={{ y: -50, opacity: 0, scale: 0.8 }}
-                animate={{ y: 0, opacity: 1, scale: 1 }}
-                exit={{ y: -50, opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h2 className="text-3xl font-bold text-center mb-4">Выберите тариф</h2>
-
-                {tariffs.map((t, i) => {
-                  const isPopular = t.name === "30 дней";
-                  return (
-                    <div key={i} className="relative w-full flex flex-col items-center">
-                      {isPopular && (
-                        <span className="absolute -top-6 bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-semibold">
-                          Чаще покупают
-                        </span>
-                      )}
-
-                      <button
-                        onClick={() => {
-                          setSelectedTariff(`${t.name} — ${t.price}`);
-                          setPaymentModalOpen(true);
-                          setTariffModalOpen(false);
-                        }}
-                        className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 relative overflow-hidden ${
-                          isPopular
-                            ? "bg-purple-600 text-white shadow-lg before:absolute before:inset-0 before:bg-gradient-to-r before:from-purple-400 before:via-pink-500 before:to-yellow-400 before:animate-pulse before:rounded-xl"
-                            : "bg-white/10 hover:bg-white/20 text-white"
-                        }`}
-                      >
-                        <span className="relative z-10">
-                          {t.name} — {t.price}
-                        </span>
-                      </button>
-                    </div>
-                  );
-                })}
-
-                <button
-                  onClick={() => setTariffModalOpen(false)}
-                  className="absolute top-4 right-4 text-white/50 hover:text-white text-xl font-bold transition"
-                >
-                  ×
-                </button>
-              </motion.div>
+                </motion.div>
+              ))}
+              <button onClick={() => setProductModalOpen(false)} className="mt-4 text-white/50 text-sm">Закрыть</button>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Модальное окно оплаты */}
-        <AnimatePresence>
-          {paymentModalOpen && selectedTariff && (
-            <motion.div
-              className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className="bg-black/90 rounded-3xl p-10 w-96 flex flex-col gap-4 relative"
-                initial={{ y: -50, opacity: 0, scale: 0.8 }}
-                animate={{ y: 0, opacity: 1, scale: 1 }}
-                exit={{ y: -50, opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h2 className="text-2xl font-bold text-center mb-4">
-                  Оплата за {selectedTariff}
-                </h2>
-                {paymentMethods.map((method, idx) => (
+      {/* ================= TARIFF MODAL ================= */}
+      <AnimatePresence>
+        {tariffModalOpen && (
+          <motion.div
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div className="bg-black/90 rounded-3xl p-10 w-96 flex flex-col gap-4">
+              <h2 className="text-3xl font-bold text-center mb-4">Выберите тариф для {selectedProduct}</h2>
+              {tariffs.map((t) => (
+                <button
+                  key={t.name}
+                  onClick={() => {
+                    setSelectedTariff(t);
+                    setTariffModalOpen(false);
+                    setPaymentModalOpen(true);
+                  }}
+                  className="w-full py-3 bg-white/10 rounded-xl hover:bg-white/20 transition font-semibold"
+                >
+                  {t.name} — {t.price}
+                </button>
+              ))}
+              <button onClick={() => setTariffModalOpen(false)} className="mt-4 text-white/50 text-sm">Закрыть</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ================= PAYMENT MODAL ================= */}
+      <AnimatePresence>
+        {paymentModalOpen && selectedProduct && selectedTariff && (
+          <motion.div
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div className="bg-black/90 rounded-3xl p-10 w-96 flex flex-col gap-4 text-center">
+              <h2 className="text-3xl font-bold mb-4">Оплата {selectedProduct}</h2>
+              <p className="text-white/70 mb-6">Тариф: {selectedTariff.name} — {selectedTariff.price}</p>
+              <div className="grid grid-cols-3 gap-4">
+                {paymentMethods.map((m) => (
                   <button
-                    key={idx}
-                    className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold transition-all duration-300"
+                    key={m.name}
+                    onClick={() => handlePayment(m.name)}
+                    className="flex flex-col items-center p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition"
                   >
-                    {method}
+                    <Image src={m.img} alt={m.name} width={50} height={50} className="mb-2" />
+                    <span className="text-white text-sm">{m.name}</span>
                   </button>
                 ))}
-
-                <button
-                  onClick={() => setPaymentModalOpen(false)}
-                  className="absolute top-4 right-4 text-white/50 hover:text-white text-xl font-bold transition"
-                >
-                  ×
-                </button>
-              </motion.div>
+              </div>
+              <button onClick={() => setPaymentModalOpen(false)} className="mt-6 px-4 py-2 rounded-xl text-black font-semibold bg-white hover:bg-gray-300 transition">
+                Закрыть
+              </button>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-
-      <Footer />
-    </>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
   );
 }
