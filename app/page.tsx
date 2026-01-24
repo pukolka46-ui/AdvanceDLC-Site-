@@ -27,9 +27,8 @@ type UpdateKeys = "AdvanceDLC" | "Visuals" | "Loader";
 export default function HomePage() {
   const router = useRouter();
   const [activeUpdate, setActiveUpdate] = useState<UpdateKeys | null>(null);
-  const [windowSize, setWindowSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
+  const [windowSize, setWindowSize] = useState<{ width: number; height: number } | null>(null);
 
-  // Только на клиенте
   useEffect(() => {
     if (typeof window !== "undefined") {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -56,19 +55,15 @@ export default function HomePage() {
     ],
   };
 
-  const paymentMethods = [
-    { name: "СБП", img: "/sbp.png" },
-    { name: "Банковская карта", img: "/card.png" },
-    { name: "USDT", img: "/usdt.png" },
-  ];
-
-  const handlePayment = (method: string) => alert(`Оплата через ${method} — заглушка`);
+  const handleNavigation = (path: string) => {
+    router.push(path);
+  };
 
   return (
-    <main className="relative overflow-hidden min-h-screen text-white bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700">
+    <main className="relative overflow-hidden min-h-screen text-white" style={{ background: "linear-gradient(135deg, #0d031b, #2c0d4c)" }}>
       
       {/* ================= PARTICLES ================= */}
-      {windowSize.width > 0 &&
+      {windowSize &&
         Array.from({ length: 50 }).map((_, i) => (
           <Particle
             key={i}
@@ -78,6 +73,33 @@ export default function HomePage() {
             delay={Math.random() * 3}
           />
         ))}
+
+      {/* ================= HEADER ================= */}
+      <header className="fixed top-0 left-0 w-full flex justify-between items-center p-6 bg-black/50 z-50 backdrop-blur-md">
+        <h1 className="text-2xl font-bold cursor-pointer" onClick={() => router.push("/")}>
+          AdvanceDLC
+        </h1>
+        <div className="flex gap-4">
+          <button
+            onClick={() => router.push("/register")}
+            className="px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-xl font-semibold transition"
+          >
+            Регистрация
+          </button>
+          <button
+            onClick={() => router.push("/login")}
+            className="px-4 py-2 bg-white text-black rounded-xl font-semibold hover:bg-gray-200 transition"
+          >
+            Войти
+          </button>
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="px-4 py-2 bg-pink-500 hover:bg-pink-600 rounded-xl font-semibold transition"
+          >
+            Личный кабинет
+          </button>
+        </div>
+      </header>
 
       {/* ================= HERO ================= */}
       <section className="min-h-screen flex flex-col items-center justify-center text-center px-6">
@@ -98,47 +120,6 @@ export default function HomePage() {
         </motion.button>
       </section>
 
-      {/* ================= ADVANCEDLC INFO ================= */}
-      <section className="py-20 px-6 max-w-5xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-          <h2 className="text-5xl font-extrabold mb-10 text-center">Что такое AdvanceDLC?</h2>
-          <p className="text-white/70 text-lg mb-6 text-center max-w-3xl mx-auto">
-            AdvanceDLC — это приватное решение для пользователей, которые ценят безопасность и скорость. Вы получаете эксклюзивные сборки, регулярные обновления и минимальный риск детекта.
-          </p>
-          <div className="grid md:grid-cols-2 gap-10 mt-10">
-            <div className="bg-white/10 p-6 rounded-3xl">
-              <h3 className="text-2xl font-bold mb-4">Плюсы</h3>
-              <ul className="list-disc list-inside text-white/70 space-y-2">
-                <li>Приватные сборки</li>
-                <li>Поддержка обновлений</li>
-                <li>Минимальный риск детекта</li>
-                <li>Простая установка и управление</li>
-              </ul>
-            </div>
-            <div className="bg-white/10 p-6 rounded-3xl">
-              <h3 className="text-2xl font-bold mb-4">Минусы</h3>
-              <ul className="list-disc list-inside text-white/70 space-y-2">
-                <li>Только для продвинутых пользователей</li>
-                <li>Цена выше базовых решений</li>
-                <li>Ограниченный доступ</li>
-              </ul>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ================= SCREENSHOTS ================= */}
-      <section className="py-20 px-6 max-w-5xl mx-auto">
-        <h2 className="text-5xl font-extrabold mb-10 text-center">Скриншоты клиента</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {screenshots.map((s, idx) => (
-            <motion.div key={idx} whileHover={{ scale: 1.05 }} className="overflow-hidden rounded-3xl shadow-lg">
-              <Image src={s} alt={`Screen ${idx+1}`} width={400} height={250} className="object-cover rounded-3xl" />
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
       {/* ================= UPDATE ================= */}
       <section className="py-20 px-6 max-w-5xl mx-auto">
         <h2 className="text-5xl font-extrabold mb-10 text-center">Update</h2>
@@ -154,15 +135,6 @@ export default function HomePage() {
               <p className="text-white/70">Последние обновления и улучшения функционала {title}.</p>
             </motion.div>
           ))}
-        </div>
-
-        {/* ================= RATING ================= */}
-        <div className="mt-10 text-center">
-          <h3 className="text-3xl font-bold mb-4">Оценка клиентов</h3>
-          <div className="flex justify-center items-center gap-2 text-yellow-400 text-2xl">
-            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-          </div>
-          <p className="text-white/70 mt-2 text-lg">5/5 звезд</p>
         </div>
       </section>
 
