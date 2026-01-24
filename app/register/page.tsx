@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
-import { assignUID } from "../../lib/assignUID";
+import { assignUID } from "../../lib/assignUID"; // функция для выдачи порядкового UID
+
+const generateHWID = () =>
+  `HWID-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(
+    1000 + Math.random() * 9000
+  )}`;
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,54 +22,76 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    // Проверяем никнейм на английские буквы и цифры
+    // Проверка никнейма на английские буквы и цифры
     if (!/^[a-zA-Z0-9]{3,20}$/.test(nickname)) {
-      setError("Никнейм должен быть 3-20 символов, только англ. буквы и цифры");
+      setError(
+        "Никнейм должен быть 3-20 символов, только англ. буквы и цифры"
+      );
       setLoading(false);
       return;
     }
 
-    // 1️⃣ Регистрируем пользователя
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    try {
+      // 1️⃣ Регистрируем пользователя через Supabase Auth
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
-    if (signUpError) {
+      if (signUpError || !signUpData.user) {
+        setError(signUpError?.message || "Ошибка регистрации");
+        setLoading(false);
+        return;
+      }
+
+      const userId = signUpData.user.id;
+
+      // 2️⃣ Присваиваем порядковый UID
+      const uid = await assignUID(userId); // должна возвращать число
+
+      if (!uid) {
+        setError("Не удалось присвоить UID");
+        setLoading(false);
+        return;
+      }
+
+      // 3️⃣ Генерируем уникальный HWID
+      const hwid = generateHWID();
+
+      // 4️⃣ Вставляем запись в таблицу uids
+      const { data: uidsData, error: uidsError } = await supabase
+        .from("uids")
+        .insert([{ id: uid, hwid, blocked: false }])
+        .select();
+
+      if (uidsError || !uidsData || uidsData.length === 0) {
+        setError("Не удалось создать запись UID/HWID");
+        setLoading(false);
+        return;
+      }
+
+      // 5️⃣ Сохраняем никнейм в таблице profiles
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert([{ user_id: userId, nickname, uid }]);
+
+      if (profileError) {
+        setError("Не удалось сохранить никнейм");
+        setLoading(false);
+        return;
+      }
+
       setLoading(false);
-      setError(signUpError.message);
-      return;
-    }
+      alert(
+        `Регистрация успешна!\nUID: ${uid}\nHWID: ${hwid}\nНикнейм: ${nickname}\nПроверьте email для подтверждения.`
+      );
 
-    const userId = data.user?.id;
-    if (!userId) {
+      router.push("/login");
+    } catch (err) {
+      setError("Произошла ошибка регистрации");
       setLoading(false);
-      setError("Не удалось получить ID пользователя");
-      return;
+      console.error(err);
     }
-
-    // 2️⃣ Присваиваем UID
-    const uid = await assignUID(userId);
-    if (!uid) {
-      setLoading(false);
-      setError("Не удалось присвоить UID");
-      return;
-    }
-
-    // 3️⃣ Сохраняем Никнейм в таблицу profiles
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .insert([{ user_id: userId, nickname, uid }]);
-
-    if (profileError) {
-      setLoading(false);
-      setError("Не удалось сохранить Никнейм");
-      return;
-    }
-
-    setLoading(false);
-    alert(`Регистрация успешна! Ваш UID: ${uid}\nНикнейм: ${nickname}\nПроверьте email для подтверждения.`);
-    router.push("/login");
   };
 
   return (

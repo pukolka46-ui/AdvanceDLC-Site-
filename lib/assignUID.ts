@@ -1,30 +1,14 @@
 import { supabase } from "./supabaseClient";
 
-export async function assignUID(userId: string) {
-  // Получаем максимальный UID
-  const { data: maxData, error: maxError } = await supabase
-    .from("uids")
-    .select("uid")
-    .order("uid", { ascending: false })
-    .limit(1)
-    .single();
+export async function assignUID(userId: string): Promise<number | null> {
+  try {
+    // Берём последний UID
+    const { data, error } = await supabase.from("uids").select("id").order("id", { ascending: false }).limit(1);
+    if (error) return null;
 
-  if (maxError && maxError.code !== "PGRST116") { // пустая таблица
-    console.error("Ошибка получения max UID:", maxError);
+    const lastId = data && data.length > 0 ? (data[0].id as number) : 0;
+    return lastId + 1; // следующий порядковый UID
+  } catch {
     return null;
   }
-
-  const nextUID = maxData?.uid ? maxData.uid + 1 : 1;
-
-  // Сохраняем новый UID
-  const { data, error } = await supabase.from("uids").insert([
-    { user_id: userId, uid: nextUID },
-  ]);
-
-  if (error) {
-    console.error("Ошибка присвоения UID:", error);
-    return null;
-  }
-
-  return nextUID;
 }
