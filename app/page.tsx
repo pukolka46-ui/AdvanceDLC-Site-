@@ -5,14 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+// ==================== PARTICLES ====================
 interface ParticleProps {
   size: number;
   x: number;
   y: number;
   delay: number;
 }
-
-// Частица
 const Particle = ({ size, x, y, delay }: ParticleProps) => (
   <motion.div
     className="absolute bg-white/20 rounded-full"
@@ -28,9 +27,9 @@ type UpdateKeys = "AdvanceDLC" | "Visuals" | "Loader";
 export default function HomePage() {
   const router = useRouter();
   const [activeUpdate, setActiveUpdate] = useState<UpdateKeys | null>(null);
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [windowSize, setWindowSize] = useState<{ width: number; height: number } | null>(null);
 
-  // Получаем размер окна **только на клиенте**
+  // Только на клиенте устанавливаем размеры окна
   useEffect(() => {
     if (typeof window !== "undefined") {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -69,7 +68,7 @@ export default function HomePage() {
     <main className="relative overflow-hidden min-h-screen text-white" style={{ background: "linear-gradient(135deg, #1a0a2a, #4b1d67)" }}>
       
       {/* ================= PARTICLES ================= */}
-      {windowSize.width > 0 &&
+      {windowSize &&
         Array.from({ length: 50 }).map((_, i) => (
           <Particle
             key={i}
@@ -106,6 +105,25 @@ export default function HomePage() {
           <p className="text-white/70 text-lg mb-6 text-center max-w-3xl mx-auto">
             AdvanceDLC — это приватное решение для пользователей, которые ценят безопасность и скорость. Вы получаете эксклюзивные сборки, регулярные обновления и минимальный риск детекта.
           </p>
+          <div className="grid md:grid-cols-2 gap-10 mt-10">
+            <div className="bg-white/10 p-6 rounded-3xl">
+              <h3 className="text-2xl font-bold mb-4">Плюсы</h3>
+              <ul className="list-disc list-inside text-white/70 space-y-2">
+                <li>Приватные сборки</li>
+                <li>Поддержка обновлений</li>
+                <li>Минимальный риск детекта</li>
+                <li>Простая установка и управление</li>
+              </ul>
+            </div>
+            <div className="bg-white/10 p-6 rounded-3xl">
+              <h3 className="text-2xl font-bold mb-4">Минусы</h3>
+              <ul className="list-disc list-inside text-white/70 space-y-2">
+                <li>Только для продвинутых пользователей</li>
+                <li>Цена выше базовых решений</li>
+                <li>Ограниченный доступ</li>
+              </ul>
+            </div>
+          </div>
         </motion.div>
       </section>
 
