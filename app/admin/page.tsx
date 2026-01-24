@@ -44,9 +44,20 @@ export default function AdminPage() {
 
   // ----------------------- Функции -----------------------
   const generateKey = async () => {
-    const key = `ADV-${Math.floor(Math.random()*10000)}-${Math.floor(Math.random()*10000)}-SUPERCAR`;
+    const key = `ADV-${Math.floor(Math.random() * 10000)}-${Math.floor(Math.random() * 10000)}-SUPERCAR`;
     const { data, error } = await supabase.from("license_keys").insert([{ key, used: false }]);
-    if (error) return alert("Ошибка создания ключа: " + error.message);
+
+    if (error) {
+      alert("Ошибка создания ключа: " + error.message);
+      return;
+    }
+
+    // Проверка на null и пустой массив
+    if (!data || data.length === 0) {
+      alert("Ошибка: ключ не был создан");
+      return;
+    }
+
     setLicenseKeys(prev => [{ ...data[0] }, ...prev]);
     setNotifications(prev => [`Создан ключ: ${key}`, ...prev]);
     setNewKeyModal(false);
