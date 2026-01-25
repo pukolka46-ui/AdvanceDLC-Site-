@@ -22,6 +22,7 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
+    // Проверка никнейма
     if (!/^[a-zA-Z0-9]{3,20}$/.test(nickname)) {
       setError("Никнейм должен быть 3-20 символов, только англ. буквы и цифры");
       setLoading(false);
@@ -46,21 +47,21 @@ export default function RegisterPage() {
       // 2️⃣ Генерируем HWID
       const hwid = generateHWID();
 
-      // 3️⃣ Вставляем запись в таблицу uids (auto-increment id)
+      // 3️⃣ Вставляем запись в таблицу uids (id автоинкремент)
       const { data: uidsData, error: uidsError } = await supabase
         .from("uids")
         .insert([{ hwid, blocked: false }])
-        .select();
+        .select()
+        .single(); // single() гарантирует, что вернется один объект
 
-      if (uidsError || !uidsData || uidsData.length === 0) {
+      if (uidsError || !uidsData) {
         console.error("UID/HWID insert error:", uidsError);
         setError("Не удалось создать запись UID/HWID");
         setLoading(false);
         return;
       }
 
-      // Получаем UID, который сгенерировал Supabase
-      const uid = uidsData[0].id;
+      const uid = uidsData.id;
 
       // 4️⃣ Вставляем никнейм в таблицу profiles
       const { error: profileError } = await supabase
