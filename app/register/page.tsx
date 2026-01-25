@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
-import { assignUID } from "../../lib/assignUID"; // функция для выдачи порядкового UID
 
 // Генератор уникального HWID
 const generateHWID = () =>
@@ -23,11 +22,8 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    // ✅ Проверка никнейма: только английские буквы и цифры
     if (!/^[a-zA-Z0-9]{3,20}$/.test(nickname)) {
-      setError(
-        "Никнейм должен быть 3-20 символов, только англ. буквы и цифры"
-      );
+      setError("Никнейм должен быть 3-20 символов, только англ. буквы и цифры");
       setLoading(false);
       return;
     }
@@ -47,21 +43,13 @@ export default function RegisterPage() {
 
       const userId = signUpData.user.id;
 
-      // 2️⃣ Присваиваем порядковый UID
-      const uid = await assignUID();
-      if (!uid || isNaN(uid)) {
-        setError("Не удалось присвоить UID");
-        setLoading(false);
-        return;
-      }
-
-      // 3️⃣ Генерируем уникальный HWID
+      // 2️⃣ Генерируем HWID
       const hwid = generateHWID();
 
-      // 4️⃣ Вставляем запись в таблицу uids
+      // 3️⃣ Вставляем запись в таблицу uids (auto-increment id)
       const { data: uidsData, error: uidsError } = await supabase
         .from("uids")
-        .insert([{ id: uid, hwid, blocked: false }])
+        .insert([{ hwid, blocked: false }])
         .select();
 
       if (uidsError || !uidsData || uidsData.length === 0) {
@@ -71,7 +59,10 @@ export default function RegisterPage() {
         return;
       }
 
-      // 5️⃣ Вставляем никнейм в таблицу profiles
+      // Получаем UID, который сгенерировал Supabase
+      const uid = uidsData[0].id;
+
+      // 4️⃣ Вставляем никнейм в таблицу profiles
       const { error: profileError } = await supabase
         .from("profiles")
         .insert([{ user_id: userId, nickname, uid }]);
@@ -83,11 +74,11 @@ export default function RegisterPage() {
         return;
       }
 
-      // ✅ Всё прошло успешно
       setLoading(false);
       alert(
         `Регистрация успешна!\nUID: ${uid}\nHWID: ${hwid}\nНикнейм: ${nickname}\nПроверьте email для подтверждения.`
       );
+
       router.push("/login");
     } catch (err) {
       console.error("Registration error:", err);
