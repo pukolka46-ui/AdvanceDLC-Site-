@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
 import { assignUID } from "../../lib/assignUID"; // функция для выдачи порядкового UID
 
+// Генератор уникального HWID
 const generateHWID = () =>
   `HWID-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(
     1000 + Math.random() * 9000
@@ -22,7 +23,7 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    // Проверка никнейма на английские буквы и цифры
+    // ✅ Проверка никнейма: только английские буквы и цифры
     if (!/^[a-zA-Z0-9]{3,20}$/.test(nickname)) {
       setError(
         "Никнейм должен быть 3-20 символов, только англ. буквы и цифры"
@@ -47,9 +48,8 @@ export default function RegisterPage() {
       const userId = signUpData.user.id;
 
       // 2️⃣ Присваиваем порядковый UID
-      const uid = await assignUID(userId); // должна возвращать число
-
-      if (!uid) {
+      const uid = await assignUID();
+      if (!uid || isNaN(uid)) {
         setError("Не удалось присвоить UID");
         setLoading(false);
         return;
@@ -65,32 +65,34 @@ export default function RegisterPage() {
         .select();
 
       if (uidsError || !uidsData || uidsData.length === 0) {
+        console.error("UID/HWID insert error:", uidsError);
         setError("Не удалось создать запись UID/HWID");
         setLoading(false);
         return;
       }
 
-      // 5️⃣ Сохраняем никнейм в таблице profiles
+      // 5️⃣ Вставляем никнейм в таблицу profiles
       const { error: profileError } = await supabase
         .from("profiles")
         .insert([{ user_id: userId, nickname, uid }]);
 
       if (profileError) {
+        console.error("Profile insert error:", profileError);
         setError("Не удалось сохранить никнейм");
         setLoading(false);
         return;
       }
 
+      // ✅ Всё прошло успешно
       setLoading(false);
       alert(
         `Регистрация успешна!\nUID: ${uid}\nHWID: ${hwid}\nНикнейм: ${nickname}\nПроверьте email для подтверждения.`
       );
-
       router.push("/login");
     } catch (err) {
+      console.error("Registration error:", err);
       setError("Произошла ошибка регистрации");
       setLoading(false);
-      console.error(err);
     }
   };
 
