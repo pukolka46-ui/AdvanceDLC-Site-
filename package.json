@@ -11,6 +11,7 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@phosphor-icons/react": "^2.1.10",
+    "@sendgrid/mail": "^8.1.6",
     "@supabase/supabase-js": "^2.91.1",
     "autoprefixer": "^10.4.22",
     "bcrypt": "^6.0.0",
