@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: Request) {
+  // Инициализируем Supabase внутри функции, чтобы не запускался на этапе build
+  const supabaseUrl = process.env.SUPABASE_URL!;
+  const supabaseKey = process.env.SUPABASE_KEY!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   const { key, hwid } = await req.json();
 
   // 1. Проверка ключа

@@ -4,7 +4,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Supabase URL или ANON KEY не заданы!");
+  throw new Error("https://xwezrstjstlmaiwukzmw.supabase.co");
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
