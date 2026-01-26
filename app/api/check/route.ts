@@ -1,11 +1,9 @@
-// app/api/check/route.ts
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Используем require для nodemailer, чтобы не ломался TypeScript
+// Nodemailer через require для TS
 const nodemailer = require("nodemailer");
 
-// Инициализация SMTP внутри функции, чтобы не запускалось на build-time
 async function sendMail(to: string, subject: string, text: string) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -23,20 +21,17 @@ async function sendMail(to: string, subject: string, text: string) {
       text,
     });
     console.log("Email sent:", info.response);
-    return info;
   } catch (err) {
     console.error("Mailer error:", err);
-    return null;
   }
 }
 
 export async function POST(req: Request) {
-  // Инициализируем Supabase внутри функции, чтобы не запускался на build
   const supabaseUrl = process.env.SUPABASE_URL!;
   const supabaseKey = process.env.SUPABASE_KEY!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const { key, hwid, email } = await req.json(); // email добавлен для уведомления
+  const { key, hwid, email } = await req.json(); // email нужен для уведомления
 
   // 1️⃣ Проверка ключа
   const { data: license } = await supabase
@@ -76,12 +71,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, reason: "HWID_MISMATCH" });
   }
 
-  // 4️⃣ Отправка уведомления на почту (если email передан)
+  // 4️⃣ Отправка письма, если email передан
   if (email) {
     await sendMail(
       email,
       "Регистрация успешно выполнена",
-      `Ваш ключ ${key} был успешно активирован!`
+      `Ваш ключ ${key} успешно активирован!`
     );
   }
 
